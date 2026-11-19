@@ -57,6 +57,7 @@ st.set_page_config(page_title=TITULO, page_icon=":material/how_to_reg:", layout=
 st.markdown(f"""<style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 html, body, .stApp {{ font-family: 'Inter', system-ui, 'Segoe UI', sans-serif; background: #f7f4f1; }}
+html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {{ overflow-x: hidden !important; }}
 .block-container {{ padding-top: .5rem !important; max-width: 820px; }}
 #MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDecoration"] {{ display: none !important; }}
 header[data-testid="stHeader"] {{ background: transparent; pointer-events: none; }}
