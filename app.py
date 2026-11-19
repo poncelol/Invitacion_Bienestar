@@ -21,7 +21,7 @@ HORARIOS = {
 }
 BOOKINGS = PAGINA + "?ismsaljsauthenabled"   # página completa (respaldo)
 TITULO = "Registro de Asistencia - Proveedores Abarrotes PAR 2027"
-EVENTO = "Mesa de trabajo con proveedores para bienes a comercializar"
+EVENTO = "Mesa de trabajo con proveedores de bienes a comercializar"
 PROGRAMA = "Programa de Abasto Rural 2027"
 FECHA = "15 de enero de 2027"
 # Correo al que deben escribir los proveedores para cancelar o cambiar de horario
