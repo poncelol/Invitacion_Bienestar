@@ -24,11 +24,13 @@ TITULO = "Registro de Asistencia / Proveedores Abarrotes"
 EVENTO = "Mesa de trabajo con proveedores para bienes a comercializar"
 PROGRAMA = "Programa de Abasto Rural 2027"
 FECHA = "15 de enero de 2027"
-ALTO_BOOKINGS = 1150   # alto en píxeles del recuadro de Bookings
-# Píxeles que se recortan arriba para ocultar el encabezado de Bookings (logo + título).
-# Si cambias el nombre de la página en Bookings y se ve un pedazo del encabezado o se corta el horario, ajústalos.
-RECORTE = 250            # computadora y tableta (título en 2 renglones)
-RECORTE_CELULAR = 284    # celular (título en 3 renglones)
+# Bookings se muestra recortado: arriba se oculta su encabezado y la tarjeta del horario,
+# abajo se oculta el pie de Microsoft. Valores medidos con la página actual de Bookings;
+# si cambias el nombre de la página o los textos de Bookings, ajústalos.
+RECORTE = 330            # px ocultos arriba en computadora/tableta
+RECORTE_CELULAR = 366    # px ocultos arriba en celular
+ALTO_BOOKINGS = 960      # px visibles en computadora/tableta (con la fecha elegida, termina justo antes del pie de Microsoft)
+ALTO_CELULAR = 958       # px visibles en celular
 # ─────────────────────────────────────────────────────────────────────
 
 BANDA, DORADO, GUINDA = "#4A0E25", "#BC955C", "#9D2449"
@@ -142,20 +144,22 @@ if horario:
     # Bookings dentro de un marco que recorta su encabezado (logo y título de Microsoft):
     # el iframe se sube RECORTE px y el marco oculta lo que queda arriba.
     marco = f"""<style>
-      html,body{{margin:0;padding:0;background:transparent}}
+      html,body{{margin:0;padding:0;background:transparent;overflow:hidden}}
       .marco{{height:{ALTO_BOOKINGS}px;overflow:hidden;border-radius:14px;border:1px solid #ece4da;background:#fff}}
-      .marco iframe{{display:block;width:100%;border:0;height:{ALTO_BOOKINGS + RECORTE_CELULAR}px;margin-top:-{RECORTE}px}}
-      @media (max-width:430px){{.marco iframe{{margin-top:-{RECORTE_CELULAR}px}}}}
+      .marco iframe{{display:block;width:100%;border:0;height:{RECORTE + ALTO_BOOKINGS}px;margin-top:-{RECORTE}px}}
+      @media (max-width:430px){{
+        .marco{{height:{ALTO_CELULAR}px}}
+        .marco iframe{{height:{RECORTE_CELULAR + ALTO_CELULAR}px;margin-top:-{RECORTE_CELULAR}px}}
+      }}
     </style>
     <div class="marco"><iframe src="{HORARIOS[horario]}" title="Registro en Microsoft Bookings"></iframe></div>"""
     if hasattr(st, "iframe"):
-        st.iframe(marco, height=ALTO_BOOKINGS + 4)
+        st.iframe(marco, height=max(ALTO_BOOKINGS, ALTO_CELULAR) + 4)
     else:   # versiones de Streamlit anteriores a st.iframe
-        components.html(marco, height=ALTO_BOOKINGS + 4)
+        components.html(marco, height=max(ALTO_BOOKINGS, ALTO_CELULAR) + 4)
 else:
     st.markdown('<div class="espera">Selecciona un horario para continuar con tu registro.</div>',
                 unsafe_allow_html=True)
 
-st.markdown(f'<div class="pie">Gerencia de Abasto de Granos y Abarrotes · Dirección Comercial · Alimentación para el Bienestar<br>'
-            f'¿No se ve el formulario? <a href="{BOOKINGS}" target="_blank" style="color:{GUINDA}">Ábrelo aquí</a></div>',
-            unsafe_allow_html=True)
+st.markdown('<div class="pie">Gerencia de Abasto de Granos y Abarrotes · Dirección Comercial · '
+            'Alimentación para el Bienestar</div>', unsafe_allow_html=True)
