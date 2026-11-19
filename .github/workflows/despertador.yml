@@ -1,0 +1,27 @@
+name: Despertador Streamlit
+
+on:
+  schedule:
+    - cron: "0 */4 * * *"   # cada 4 horas (hora UTC)
+  workflow_dispatch:         # botón "Run workflow" para probarlo a mano
+
+jobs:
+  despertar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      APP_URL: https://invitacionbienestar-jpgvhh7xbagstzbsfrjxlr.streamlit.app/
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar Playwright
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Despertar la app
+        run: python despertar.py
