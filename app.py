@@ -24,7 +24,11 @@ TITULO = "Registro de Asistencia / Proveedores Abarrotes"
 EVENTO = "Mesa de trabajo con proveedores para bienes a comercializar"
 PROGRAMA = "Programa de Abasto Rural 2027"
 FECHA = "15 de enero de 2027"
-ALTO_BOOKINGS = 1350   # alto en píxeles del recuadro de Bookings
+ALTO_BOOKINGS = 1150   # alto en píxeles del recuadro de Bookings
+# Píxeles que se recortan arriba para ocultar el encabezado de Bookings (logo + título).
+# Si cambias el nombre de la página en Bookings y se ve un pedazo del encabezado o se corta el horario, ajústalos.
+RECORTE = 250            # computadora y tableta (título en 2 renglones)
+RECORTE_CELULAR = 284    # celular (título en 3 renglones)
 # ─────────────────────────────────────────────────────────────────────
 
 BANDA, DORADO, GUINDA = "#4A0E25", "#BC955C", "#9D2449"
@@ -134,10 +138,19 @@ if horario:
                 '<div class="pasos">En el calendario avanza a <b>enero 2027</b> si es necesario, elige el día '
                 '<b>15</b>, da clic en la hora, escribe tus datos y el nombre del proveedor, y da clic en '
                 '<b>Reservar</b>.</div>', unsafe_allow_html=True)
+    # Bookings dentro de un marco que recorta su encabezado (logo y título de Microsoft):
+    # el iframe se sube RECORTE px y el marco oculta lo que queda arriba.
+    marco = f"""<style>
+      html,body{{margin:0;padding:0;background:transparent}}
+      .marco{{height:{ALTO_BOOKINGS}px;overflow:hidden;border-radius:14px;border:1px solid #ece4da;background:#fff}}
+      .marco iframe{{display:block;width:100%;border:0;height:{ALTO_BOOKINGS + RECORTE_CELULAR}px;margin-top:-{RECORTE}px}}
+      @media (max-width:430px){{.marco iframe{{margin-top:-{RECORTE_CELULAR}px}}}}
+    </style>
+    <div class="marco"><iframe src="{HORARIOS[horario]}" title="Registro en Microsoft Bookings"></iframe></div>"""
     if hasattr(st, "iframe"):
-        st.iframe(HORARIOS[horario], height=ALTO_BOOKINGS)
+        st.iframe(marco, height=ALTO_BOOKINGS + 4)
     else:   # versiones de Streamlit anteriores a st.iframe
-        components.iframe(HORARIOS[horario], height=ALTO_BOOKINGS, scrolling=True)
+        components.html(marco, height=ALTO_BOOKINGS + 4)
 else:
     st.markdown('<div class="espera">Selecciona un horario para continuar con tu registro.</div>',
                 unsafe_allow_html=True)
