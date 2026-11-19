@@ -142,7 +142,8 @@ if horario:
                 '<b>15</b>, da clic en la hora, escribe tus datos y el nombre del proveedor, y da clic en '
                 '<b>Reservar</b>.</div>', unsafe_allow_html=True)
     # Bookings dentro de un marco que recorta su encabezado (logo y título de Microsoft):
-    # el iframe se sube RECORTE px y el marco oculta lo que queda arriba.
+    # el iframe se sube RECORTE px y el marco oculta lo que queda arriba. scrolling="no" impide que
+    # el proveedor se desplace dentro de Bookings y vea el pie de Microsoft.
     marco = f"""<style>
       html,body{{margin:0;padding:0;background:transparent;overflow:hidden}}
       .marco{{height:{ALTO_BOOKINGS}px;overflow:hidden;border-radius:14px;border:1px solid #ece4da;background:#fff}}
@@ -152,7 +153,7 @@ if horario:
         .marco iframe{{height:{RECORTE_CELULAR + ALTO_CELULAR}px;margin-top:-{RECORTE_CELULAR}px}}
       }}
     </style>
-    <div class="marco"><iframe src="{HORARIOS[horario]}" title="Registro en Microsoft Bookings"></iframe></div>"""
+    <div class="marco"><iframe src="{HORARIOS[horario]}" title="Registro en Microsoft Bookings" scrolling="no"></iframe></div>"""
     if hasattr(st, "iframe"):
         st.iframe(marco, height=max(ALTO_BOOKINGS, ALTO_CELULAR) + 4)
     else:   # versiones de Streamlit anteriores a st.iframe
