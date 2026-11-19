@@ -24,6 +24,8 @@ TITULO = "Registro de Asistencia - Proveedores Abarrotes PAR 2027"
 EVENTO = "Mesa de trabajo con proveedores para bienes a comercializar"
 PROGRAMA = "Programa de Abasto Rural 2027"
 FECHA = "15 de enero de 2027"
+# Correo al que deben escribir los proveedores para cancelar o cambiar de horario
+CONTACTO = "marizmendi@alimentacionbienestar.gob.mx"
 # Bookings se muestra recortado: arriba se oculta su encabezado y la tarjeta del horario,
 # abajo se oculta el pie de Microsoft. Valores medidos con la página actual de Bookings;
 # si cambias el nombre de la página o los textos de Bookings, ajústalos.
@@ -122,7 +124,7 @@ st.markdown(f'<p class="titulo">{TITULO}</p><p class="evento">{EVENTO}<br>{PROGR
 
 # Fecha
 st.markdown(f"""<div class="tarjeta">
-<div class="fecha"><b>{FECHA}</b><span>Sesiones de 1 hora · cupo de 30 por horario</span></div>
+<div class="fecha"><b>{FECHA}</b><span>Sesiones de 1 hora · cupo 30 proveedores por horario</span></div>
 </div>""", unsafe_allow_html=True)
 
 # Avisos, uno por renglón
@@ -154,8 +156,41 @@ if horario:
         .marco{{height:{ALTO_CELULAR}px}}
         .marco iframe{{height:{RECORTE_CELULAR + ALTO_CELULAR}px;margin-top:-{RECORTE_CELULAR}px}}
       }}
+      .enviado{{display:none;font-family:'Inter','Segoe UI',system-ui,sans-serif;background:#fff;border:1px solid #ece4da;
+        border-top:6px solid {GUINDA};border-radius:14px;padding:34px 28px;text-align:center;color:#374151}}
+      .enviado .ico{{width:64px;height:64px;margin:0 auto 14px;border-radius:50%;background:#e3f5ea;color:#239f52;
+        display:grid;place-items:center;font-size:34px;font-weight:800}}
+      .enviado h2{{margin:0 0 8px;font-size:1.6rem;color:#1f2937}}
+      .enviado p{{margin:8px 0;font-size:1.02rem;line-height:1.55}}
+      .enviado .hor{{display:inline-block;margin:10px 0 6px;padding:8px 16px;border-radius:10px;background:#fdf6f8;
+        border:1.5px solid {GUINDA};color:{GUINDA};font-weight:800}}
+      .enviado .cancel{{margin-top:18px;background:#f6efe4;border-radius:12px;padding:14px 16px;text-align:left}}
+      .enviado a{{color:{GUINDA};font-weight:700}}
     </style>
-    <div class="marco"><iframe src="{HORARIOS[horario]}" title="Registro en Microsoft Bookings" scrolling="no"></iframe></div>"""
+    <div class="marco" id="marco"><iframe id="bk" src="{HORARIOS[horario]}" title="Registro en Microsoft Bookings" scrolling="no"></iframe></div>
+    <div class="enviado" id="enviado">
+      <div class="ico">✓</div>
+      <h2>Registro enviado</h2>
+      <div class="hor">{FECHA} · {horario}</div>
+      <p>En unos minutos recibirás un <b>correo de confirmación</b> de Microsoft con los datos de tu registro.<br>
+         Si no lo ves, revisa tu carpeta de correo no deseado.</p>
+      <p><b>Favor de llegar 15 minutos antes.</b></p>
+      <div class="cancel"><b>¿Necesitas cancelar o cambiar de horario?</b><br>
+        No uses la opción del correo: escribe a <a href="mailto:{CONTACTO}">{CONTACTO}</a>
+        indicando el nombre del proveedor y del representante.</div>
+    </div>
+    <script>
+      // Bookings carga una sola vez al abrir; cambiar de mes o elegir la hora no lo recarga.
+      // Si vuelve a cargar es porque se envió la reserva: se oculta Bookings y se muestra el mensaje.
+      let cargas = 0;
+      document.getElementById("bk").addEventListener("load", () => {{
+        cargas += 1;
+        if (cargas > 1) {{
+          document.getElementById("marco").style.display = "none";
+          document.getElementById("enviado").style.display = "block";
+        }}
+      }});
+    </script>"""
     if hasattr(st, "iframe"):
         st.iframe(marco, height=max(ALTO_BOOKINGS, ALTO_CELULAR) + 4)
     else:   # versiones de Streamlit anteriores a st.iframe
