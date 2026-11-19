@@ -20,7 +20,7 @@ HORARIOS = {
     "17:00 a 18:00": PAGINA + "s/cetFubhcRE2MfkcZyNOWpQ2?ismsaljsauthenabled",
 }
 BOOKINGS = PAGINA + "?ismsaljsauthenabled"   # página completa (respaldo)
-TITULO = "Registro de Asistencia / Proveedores Abarrotes"
+TITULO = "Registro de Asistencia - Proveedores Abarrotes PAR 2027"
 EVENTO = "Mesa de trabajo con proveedores para bienes a comercializar"
 PROGRAMA = "Programa de Abasto Rural 2027"
 FECHA = "15 de enero de 2027"
@@ -69,8 +69,9 @@ header[data-testid="stHeader"] {{ background: transparent; pointer-events: none;
 .marca {{ display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }}
 .marca .sep {{ width: 1px; align-self: stretch; background: rgb(255 255 255 / .45); }}
 .marca b {{ font-size: 1.5rem; font-weight: 800; color: #fff; line-height: 1.1; }}
-.hero .dir {{ font-size: 1.6rem; font-weight: 700; color: #fff; }}
-.hero .ger {{ margin-top: 2px; font-size: 1.1rem; font-weight: 600; color: {DORADO}; }}
+.hero .dir {{ font-size: 1.9rem; font-weight: 800; color: #fff; line-height: 1.15; }}
+.hero .ger {{ margin-top: 4px; font-size: 1.15rem; font-weight: 700; color: #fff; }}
+.hero .sub {{ margin-top: 2px; font-size: 1rem; font-weight: 700; color: {DORADO}; }}
 .titulo {{ font-size: 1.7rem !important; font-weight: 800; color: #1f2937; margin: 0 0 4px !important; line-height: 1.2; }}
 .evento {{ font-size: 1.05rem !important; color: #4b5563; margin: 0 0 18px; }}
 .tarjeta {{ background: #fff; border-radius: 14px; border: 1px solid #ece4da; padding: 18px 20px; margin-bottom: 16px;
@@ -106,7 +107,7 @@ ul.avisos li i {{ font-style: normal; color: {DORADO}; font-weight: 800; }}
 [data-testid="stButtonGroup"] button[aria-checked="true"] {{ background: {GUINDA} !important; color: #fff !important;
   box-shadow: 0 4px 12px rgb(157 36 73 / .25); }}
 .pie {{ text-align: center; margin: 24px 0 8px; font-size: .78rem; color: #9ca3af; }}
-@media (max-width: 640px) {{ .marca b {{ font-size: 1.1rem; }} .hero .dir {{ font-size: 1.3rem; }} .titulo {{ font-size: 1.35rem; }} }}
+@media (max-width: 640px) {{ .marca b {{ font-size: 1.1rem; }} .hero .dir {{ font-size: 1.5rem; }} .hero .ger {{ font-size: 1rem; }} .titulo {{ font-size: 1.35rem; }} }}
 </style>""", unsafe_allow_html=True)
 
 # Encabezado institucional con la jerarquía
@@ -114,6 +115,7 @@ st.markdown(f"""<div class="hero">
 <div class="marca">{LOGO}<span class="sep"></span><b>Alimentación para el Bienestar</b></div>
 <div class="dir">Dirección Comercial</div>
 <div class="ger">Gerencia de Abasto de Granos y Abarrotes</div>
+<div class="sub">Subgerencia de Abarrotes</div>
 </div>""", unsafe_allow_html=True)
 
 st.markdown(f'<p class="titulo">{TITULO}</p><p class="evento">{EVENTO}<br>{PROGRAMA}</p>', unsafe_allow_html=True)
