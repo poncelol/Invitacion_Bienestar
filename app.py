@@ -1,7 +1,8 @@
 """
 Contraportada de registro · Alimentación para el Bienestar
 Arriba: diseño institucional con toda la información del evento.
-Abajo: la página de Microsoft Bookings incrustada (Bookings hace el cupo, el correo y el calendario).
+El proveedor elige su horario en tus tarjetas y abajo aparece Bookings YA con ese horario
+(enlace directo al servicio). Bookings hace el cupo, el correo y el calendario.
 
 Ejecutar:  streamlit run app.py
 No necesita secretos.
@@ -10,14 +11,20 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 # ─────────────── CONFIGURACIÓN: cambia aquí tus datos ───────────────
-BOOKINGS = ("https://bookings.cloud.microsoft/book/"
-            "RegistrodeProveedoresAbarrotes@alimentacionbienestar.gob.mx/?ismsaljsauthenabled")
+PAGINA = "https://bookings.cloud.microsoft/book/RegistrodeProveedoresAbarrotes@alimentacionbienestar.gob.mx/"
+# Enlace directo de cada horario (Bookings > Servicios > "Página de reserva de servicio")
+HORARIOS = {
+    "11:00 a 12:00": PAGINA + "s/rOjGrpx8GUmoMs0ht5kNDw2?ismsaljsauthenabled",
+    "13:00 a 14:00": PAGINA + "s/gGQ5tkmrlEmIo5XD-w9DXQ2?ismsaljsauthenabled",
+    "15:00 a 16:00": PAGINA + "s/FmkSeZnzYkOC_0vVg_FTSA2?ismsaljsauthenabled",
+    "17:00 a 18:00": PAGINA + "s/cetFubhcRE2MfkcZyNOWpQ2?ismsaljsauthenabled",
+}
+BOOKINGS = PAGINA + "?ismsaljsauthenabled"   # página completa (respaldo)
 TITULO = "Registro de Asistencia / Proveedores Abarrotes"
 EVENTO = "Mesa de trabajo con proveedores para bienes a comercializar"
 PROGRAMA = "Programa de Abasto Rural 2027"
 FECHA = "15 de enero de 2027"
-HORARIOS = ["11:00 a 12:00", "13:00 a 14:00", "15:00 a 16:00", "17:00 a 18:00"]
-ALTO_BOOKINGS = 1500   # alto en píxeles del recuadro de Bookings
+ALTO_BOOKINGS = 1350   # alto en píxeles del recuadro de Bookings
 # ─────────────────────────────────────────────────────────────────────
 
 BANDA, DORADO, GUINDA = "#4A0E25", "#BC955C", "#9D2449"
@@ -75,6 +82,22 @@ ul.avisos li i {{ font-style: normal; color: {DORADO}; font-weight: 800; }}
 .pasos b {{ color: #1f2937; }}
 .pasos ol {{ margin: 6px 0 0 18px; padding: 0; }}
 .pasos li {{ margin: 3px 0; }}
+.paso {{ display: flex; align-items: center; gap: 10px; font-size: 1.15rem !important; font-weight: 700;
+  color: #1f2937; margin: 22px 0 10px !important; }}
+.paso span {{ display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%;
+  background: {GUINDA}; color: #fff; font-size: .95rem; }}
+.espera {{ text-align: center; color: #6b7280; padding: 26px; border: 1.5px dashed #d9cfc4; border-radius: 14px;
+  background: #fff; }}
+.st-key-horario, .st-key-horario [data-testid="stButtonGroup"], .st-key-horario div[role="radiogroup"] {{
+  width: 100% !important; max-width: 100% !important; }}
+[data-testid="stButtonGroup"] div[role="radiogroup"] {{ display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; width: 100%; }}
+[data-testid="stButtonGroup"] button {{ width: 100%; padding: 12px 10px !important; border-radius: 12px !important;
+  border: 1.5px solid {GUINDA} !important; background: #fff !important; color: {GUINDA} !important; }}
+[data-testid="stButtonGroup"] button p {{ font-weight: 800 !important; font-size: 1.15rem !important; color: inherit !important; }}
+[data-testid="stButtonGroup"] button:hover {{ background: #fdf6f8 !important; }}
+[data-testid="stButtonGroup"] button[aria-checked="true"] {{ background: {GUINDA} !important; color: #fff !important;
+  box-shadow: 0 4px 12px rgb(157 36 73 / .25); }}
 .pie {{ text-align: center; margin: 24px 0 8px; font-size: .78rem; color: #9ca3af; }}
 @media (max-width: 640px) {{ .marca b {{ font-size: 1.1rem; }} .hero .dir {{ font-size: 1.3rem; }} .titulo {{ font-size: 1.35rem; }} }}
 </style>""", unsafe_allow_html=True)
@@ -88,10 +111,9 @@ st.markdown(f"""<div class="hero">
 
 st.markdown(f'<p class="titulo">{TITULO}</p><p class="evento">{EVENTO}<br>{PROGRAMA}</p>', unsafe_allow_html=True)
 
-# Fecha y horarios
+# Fecha
 st.markdown(f"""<div class="tarjeta">
 <div class="fecha"><b>{FECHA}</b><span>Sesiones de 1 hora · cupo de 30 por horario</span></div>
-<div class="horas">{"".join(f"<div>{h}</div>" for h in HORARIOS)}</div>
 </div>""", unsafe_allow_html=True)
 
 # Avisos, uno por renglón
@@ -101,18 +123,24 @@ st.markdown(f"""<div class="tarjeta"><ul class="avisos">
 <li><i>•</i><span>Al terminar recibirás un <b>correo de confirmación</b> de Microsoft.</span></li>
 </ul></div>""", unsafe_allow_html=True)
 
-st.markdown(f"""<div class="pasos"><b>¿Cómo registrarte?</b>
-<ol>
-<li>Elige tu horario.</li>
-<li>En el calendario avanza a <b>enero 2027</b>, elige el día <b>15</b> y da clic en la hora.</li>
-<li>Escribe tu nombre, tu correo y el nombre del proveedor, y da clic en <b>Reservar</b>.</li>
-</ol></div>""", unsafe_allow_html=True)
+# Paso 1: el proveedor elige su horario con tus tarjetas
+st.markdown('<p class="paso"><span>1</span>Elige tu horario</p>', unsafe_allow_html=True)
+horario = st.pills("Horario", list(HORARIOS), selection_mode="single", label_visibility="collapsed",
+                   key="horario")
 
-# Bookings incrustado (código oficial de "Insertar")
-if hasattr(st, "iframe"):
-    st.iframe(BOOKINGS, height=ALTO_BOOKINGS)
-else:   # versiones de Streamlit anteriores a st.iframe
-    components.iframe(BOOKINGS, height=ALTO_BOOKINGS, scrolling=True)
+# Paso 2: Bookings ya con ese horario seleccionado
+if horario:
+    st.markdown(f'<p class="paso"><span>2</span>Completa tu registro · {FECHA} · {horario}</p>'
+                '<div class="pasos">En el calendario avanza a <b>enero 2027</b> si es necesario, elige el día '
+                '<b>15</b>, da clic en la hora, escribe tus datos y el nombre del proveedor, y da clic en '
+                '<b>Reservar</b>.</div>', unsafe_allow_html=True)
+    if hasattr(st, "iframe"):
+        st.iframe(HORARIOS[horario], height=ALTO_BOOKINGS)
+    else:   # versiones de Streamlit anteriores a st.iframe
+        components.iframe(HORARIOS[horario], height=ALTO_BOOKINGS, scrolling=True)
+else:
+    st.markdown('<div class="espera">Selecciona un horario para continuar con tu registro.</div>',
+                unsafe_allow_html=True)
 
 st.markdown(f'<div class="pie">Gerencia de Abasto de Granos y Abarrotes · Dirección Comercial · Alimentación para el Bienestar<br>'
             f'¿No se ve el formulario? <a href="{BOOKINGS}" target="_blank" style="color:{GUINDA}">Ábrelo aquí</a></div>',
